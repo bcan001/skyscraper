@@ -93,7 +93,7 @@ namespace :scraper do
 			# we need to update the anchor value so the application makes requests with different anchor values each time
 			# every time the rake task is ran, the anchor value will be updated
 			Anchor.first.update(value: result["anchor"])
-		
+
 			# we want the loop to stop when the postings hash is empty
 			break if result["postings"].empty?
 
@@ -150,6 +150,17 @@ namespace :scraper do
 			@location.code = location["code"]
 			@location.name = location["short_name"]
 			@location.save
+		end
+	end
+
+
+
+	desc "discard old data"
+	task descard_old_data: :environment do
+		Post.all.each do |post|
+			if post.created_at < 6.hours.ago
+				post.destroy
+			end
 		end
 	end
 
